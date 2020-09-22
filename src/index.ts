@@ -36,8 +36,7 @@ async function run(): Promise<void> {
 
         await rebaser.rebasePullRequests(pullRequests);
 
-        await labeler.createOptInLabel(ownerName, repoName);
-        await labeler.labelNonRebaseablePullRequests(ownerName, repoName, base);
+        await labeler.createOptOutLabel(ownerName, repoName);
     } catch (e) {
         setFailed(e);
     }

@@ -3,8 +3,7 @@ import {
     TestableEligiblePullRequestsRetriever,
 } from '../testableEligiblePullRequestsRetriever';
 import {MergeableState, PullRequestInfo} from '../../pullrequestinfo';
-import each from 'jest-each';
-import {OPT_IN_LABEL} from '../../labels';
+import {OPT_OUT_LABEL} from '../../labels';
 
 class TestOpenPullRequestsProvider implements OpenPullRequestsProvider {
     openPullRequestsValue: PullRequestInfo[] = [];
@@ -26,7 +25,7 @@ test('Without open pull requests there are no eligible pull requests', async () 
 });
 
 describe('A pull request is eligible', () => {
-    it(`when it is rebaseable and it has the label '${OPT_IN_LABEL}'`, async () => {
+    it(`when it is rebaseable and it does not have the label '${OPT_OUT_LABEL}'`, async () => {
         /* Given */
         testOpenPullRequestsProvider.openPullRequestsValue = [
             {
@@ -36,7 +35,7 @@ describe('A pull request is eligible', () => {
                 draft: false,
                 rebaseable: true,
                 mergeableState: 'behind',
-                labels: [OPT_IN_LABEL],
+                labels: [],
             },
         ];
 
@@ -52,7 +51,7 @@ describe('A pull request is eligible', () => {
                 draft: false,
                 rebaseable: true,
                 mergeableState: 'behind',
-                labels: [OPT_IN_LABEL],
+                labels: [],
             },
         ]);
     });
@@ -69,7 +68,7 @@ describe('A pull request is not eligible', () => {
                 draft: false,
                 rebaseable: false,
                 mergeableState: 'behind',
-                labels: [OPT_IN_LABEL],
+                labels: [],
             },
         ];
 
@@ -80,7 +79,7 @@ describe('A pull request is not eligible', () => {
         expect(results).toStrictEqual([]);
     });
 
-    it(`when it doesn't have the '${OPT_IN_LABEL}' label`, async () => {
+    it(`when it has the '${OPT_OUT_LABEL}' label`, async () => {
         /* Given */
         testOpenPullRequestsProvider.openPullRequestsValue = [
             {
@@ -90,7 +89,7 @@ describe('A pull request is not eligible', () => {
                 draft: false,
                 rebaseable: true,
                 mergeableState: 'behind',
-                labels: [],
+                labels: [OPT_OUT_LABEL],
             },
         ];
 
