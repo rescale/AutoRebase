@@ -5,7 +5,7 @@ import {OPT_IN_LABEL} from '../labels';
 
 // Secondary port for [[TestableEligiblePullRequestsRetriever]]
 export interface OpenPullRequestsProvider {
-    openPullRequests(ownerName: string, repoName: string): Promise<PullRequestInfo[]>;
+    openPullRequests(ownerName: string, repoName: string, base: string): Promise<PullRequestInfo[]>;
 }
 
 export class TestableEligiblePullRequestsRetriever implements EligiblePullRequestsRetriever {
@@ -15,10 +15,10 @@ export class TestableEligiblePullRequestsRetriever implements EligiblePullReques
         this.openPullRequestsProvider = openPullRequestsProvider;
     }
 
-    async findEligiblePullRequests(ownerName: string, repoName: string): Promise<PullRequestInfo[]> {
-        const pullRequests = await this.openPullRequestsProvider.openPullRequests(ownerName, repoName);
+    async findEligiblePullRequests(ownerName: string, repoName: string, base: string): Promise<PullRequestInfo[]> {
+        const pullRequests = await this.openPullRequestsProvider.openPullRequests(ownerName, repoName, base);
 
-        info(`Found ${pullRequests.length} open pull requests.`);
+        info(`Found ${pullRequests.length} open pull requests against ${base}`);
 
         const results = pullRequests.filter((value) => {
             return TestableEligiblePullRequestsRetriever.isEligible(value);

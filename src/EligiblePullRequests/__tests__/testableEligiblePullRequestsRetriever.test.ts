@@ -9,7 +9,7 @@ import {OPT_IN_LABEL} from '../../labels';
 class TestOpenPullRequestsProvider implements OpenPullRequestsProvider {
     openPullRequestsValue: PullRequestInfo[] = [];
 
-    async openPullRequests(ownerName: string, repoName: string): Promise<PullRequestInfo[]> {
+    async openPullRequests(ownerName: string, repoName: string, base: string): Promise<PullRequestInfo[]> {
         return this.openPullRequestsValue;
     }
 }
@@ -19,14 +19,14 @@ const retriever = new TestableEligiblePullRequestsRetriever(testOpenPullRequests
 
 test('Without open pull requests there are no eligible pull requests', async () => {
     /* When */
-    const results = await retriever.findEligiblePullRequests('owner', 'repo');
+    const results = await retriever.findEligiblePullRequests('owner', 'repo', 'master');
 
     /* Then */
     expect(results).toStrictEqual([]);
 });
 
 describe('A pull request is eligible', () => {
-    it(`when it is rebaseable, the mergeableState is 'behind' and it has the label '${OPT_IN_LABEL}'`, async () => {
+    it(`when it is rebaseable and it has the label '${OPT_IN_LABEL}'`, async () => {
         /* Given */
         testOpenPullRequestsProvider.openPullRequestsValue = [
             {
@@ -41,7 +41,7 @@ describe('A pull request is eligible', () => {
         ];
 
         /* When */
-        const results = await retriever.findEligiblePullRequests('owner', 'repo');
+        const results = await retriever.findEligiblePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(results).toStrictEqual([
@@ -74,35 +74,11 @@ describe('A pull request is not eligible', () => {
         ];
 
         /* When */
-        const results = await retriever.findEligiblePullRequests('owner', 'repo');
+        const results = await retriever.findEligiblePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(results).toStrictEqual([]);
     });
-
-    each([['blocked'], ['clean'], ['dirty'], ['unknown'], ['unstable']]).it(
-        "when the mergeableState is '%s'",
-        async (mergeableState: MergeableState) => {
-            /* Given */
-            testOpenPullRequestsProvider.openPullRequestsValue = [
-                {
-                    ownerName: 'owner',
-                    repoName: 'repo',
-                    number: 3,
-                    draft: false,
-                    rebaseable: true,
-                    mergeableState: mergeableState,
-                    labels: [OPT_IN_LABEL],
-                },
-            ];
-
-            /* When */
-            const results = await retriever.findEligiblePullRequests('owner', 'repo');
-
-            /* Then */
-            expect(results).toStrictEqual([]);
-        },
-    );
 
     it(`when it doesn't have the '${OPT_IN_LABEL}' label`, async () => {
         /* Given */
@@ -119,28 +95,7 @@ describe('A pull request is not eligible', () => {
         ];
 
         /* When */
-        const results = await retriever.findEligiblePullRequests('owner', 'repo');
-
-        /* Then */
-        expect(results).toStrictEqual([]);
-    });
-
-    it(`when it is a draft pull request`, async () => {
-        /* Given */
-        testOpenPullRequestsProvider.openPullRequestsValue = [
-            {
-                ownerName: 'owner',
-                repoName: 'repo',
-                number: 3,
-                draft: true,
-                rebaseable: true,
-                mergeableState: 'behind',
-                labels: [OPT_IN_LABEL],
-            },
-        ];
-
-        /* When */
-        const results = await retriever.findEligiblePullRequests('owner', 'repo');
+        const results = await retriever.findEligiblePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(results).toStrictEqual([]);

@@ -52,7 +52,7 @@ describe('A pull request gets labeled when', () => {
         });
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(pullRequests.get(3)!.labels).toContain(NON_REBASEABLE_LABEL);
@@ -73,7 +73,7 @@ describe('A pull request does not get labeled when', () => {
         });
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(pullRequests.get(3)!.labels).toStrictEqual([]);
@@ -94,7 +94,7 @@ describe('A pull request does not get labeled when', () => {
         const addLabelSpy = spyOn(labelPullRequestService, 'addLabel');
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(addLabelSpy).not.toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe('A pull request does not get labeled when', () => {
         const addLabelSpy = spyOn(labelPullRequestService, 'addLabel');
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(addLabelSpy).not.toHaveBeenCalled();
@@ -136,7 +136,7 @@ describe('The label gets removed from a pull request when', () => {
         });
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(pullRequests.get(3)!.labels).toStrictEqual([]);
@@ -157,7 +157,7 @@ describe('The label does not get removed from a pull request when', () => {
         });
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(pullRequests.get(3)!.labels).toStrictEqual([NON_REBASEABLE_LABEL]);
@@ -178,7 +178,7 @@ describe('The label does not get removed from a pull request when', () => {
         const removeLabelSpy = spyOn(labelPullRequestService, 'removeLabel');
 
         /* When */
-        await labeler.labelNonRebaseablePullRequests('owner', 'repo');
+        await labeler.labelNonRebaseablePullRequests('owner', 'repo', 'master');
 
         /* Then */
         expect(removeLabelSpy).not.toHaveBeenCalled();

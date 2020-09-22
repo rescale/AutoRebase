@@ -35,8 +35,8 @@ export class Labeler {
         );
     }
 
-    async labelNonRebaseablePullRequests(ownerName: string, repoName: string): Promise<void> {
-        const pullRequests = await this.openPullRequestsProvider.openPullRequests(ownerName, repoName);
+    async labelNonRebaseablePullRequests(ownerName: string, repoName: string, base: string): Promise<void> {
+        const pullRequests = await this.openPullRequestsProvider.openPullRequests(ownerName, repoName, base);
         await this.addLabels(pullRequests, ownerName, repoName);
         await this.removeLabels(pullRequests, ownerName, repoName);
     }

@@ -10,8 +10,8 @@ export class GithubOpenPullRequestsProvider implements OpenPullRequestsProvider 
         private mergeableStateProvider: GithubPullRequestInfoProvider,
     ) {}
 
-    async openPullRequests(ownerName: string, repoName: string): Promise<PullRequestInfo[]> {
-        const pullRequests = await this.listPullRequestsService.listOpenPullRequests(ownerName, repoName);
+    async openPullRequests(ownerName: string, repoName: string, base: string): Promise<PullRequestInfo[]> {
+        const pullRequests = await this.listPullRequestsService.listOpenPullRequests(ownerName, repoName, base);
 
         return await mapAsync(pullRequests, async (pullRequest) => {
             return this.pullRequestInfoFor(ownerName, repoName, pullRequest);

@@ -1,4 +1,4 @@
-import {getInput, setFailed} from '@actions/core';
+import {getInput, setFailed, info} from '@actions/core';
 import {context, GitHub} from '@actions/github';
 import {EventPayloads} from '@octokit/webhooks';
 import {EligiblePullRequestsRetriever} from './EligiblePullRequests/eligiblePullRequestsRetriever';
@@ -26,15 +26,18 @@ async function run(): Promise<void> {
 
         const payload = context.payload as EventPayloads.WebhookPayloadPush;
 
+        info(`Received push on ${payload.ref}`);
+
         const ownerName = payload.repository.owner.login;
         const repoName = payload.repository.name;
+        const base = payload.ref.split('/').slice(-1)[0];
 
-        const pullRequests = await eligiblePullRequestsRetriever.findEligiblePullRequests(ownerName, repoName);
+        const pullRequests = await eligiblePullRequestsRetriever.findEligiblePullRequests(ownerName, repoName, base);
 
         await rebaser.rebasePullRequests(pullRequests);
 
         await labeler.createOptInLabel(ownerName, repoName);
-        await labeler.labelNonRebaseablePullRequests(ownerName, repoName);
+        await labeler.labelNonRebaseablePullRequests(ownerName, repoName, base);
     } catch (e) {
         setFailed(e);
     }

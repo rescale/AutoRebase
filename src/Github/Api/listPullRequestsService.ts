@@ -1,8 +1,9 @@
 import {GitHub} from '@actions/github';
 import {Octokit} from '@octokit/rest';
+import {createBuilderStatusReporter} from 'typescript';
 
 export interface ListPullRequestsService {
-    listOpenPullRequests(ownerName: string, repoName: string): Promise<ApiListPullRequest[]>;
+    listOpenPullRequests(ownerName: string, repoName: string, base: string): Promise<ApiListPullRequest[]>;
 }
 
 export interface ApiListPullRequest {
@@ -13,11 +14,12 @@ export interface ApiListPullRequest {
 export class GithubListPullRequestsService implements ListPullRequestsService {
     constructor(private github: GitHub) {}
 
-    async listOpenPullRequests(ownerName: string, repoName: string): Promise<ApiListPullRequest[]> {
+    async listOpenPullRequests(ownerName: string, repoName: string, base: string): Promise<ApiListPullRequest[]> {
         const options = this.github.pulls.list.endpoint.merge({
             owner: ownerName,
             repo: repoName,
             state: 'open',
+            base: base,
         });
 
         const openPulls: ApiListPullRequest[] = [];
